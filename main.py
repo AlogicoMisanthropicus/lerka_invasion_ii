@@ -3,7 +3,6 @@ import pygame
 import sys
 
 from time import sleep
-
 from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
@@ -25,8 +24,8 @@ class LerkaInvasion:
         self.settings = Settings()
 
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.settings.screen_width = self.screen.get_rect().width
-        self.settings.screen_height = self.screen.get_rect().height
+        self.screen_width = self.screen.get_rect().width
+        self.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("LERKA Invasion")
 
         self.stats = GameStats(self)
@@ -54,19 +53,20 @@ class LerkaInvasion:
 
         self.easy_button.rect.top = (
                 self.play_button.rect.top + 2.5 * self.play_button.rect.height)
-        self.easy_button._update_msg_position()
+        self.easy_button.update_msg_position()
 
         self.medium_button.rect.top = (
                 self.easy_button.rect.top + 1.5 * self.play_button.rect.height)
-        self.medium_button._update_msg_position()
+        self.medium_button.update_msg_position()
 
         self.hard_button.rect.top = (
-                self.medium_button.rect.top + 1.5 * self.play_button.rect.height)
-        self.hard_button._update_msg_position()
+                self.medium_button.rect.top + 1.5 *
+                self.play_button.rect.height)
+        self.hard_button.update_msg_position()
 
         self.help_button.rect.bottom = (
                 self.play_button.rect.top - 1.5 * self.play_button.rect.height)
-        self.help_button._update_msg_position()
+        self.help_button.update_msg_position()
 
     def run_game(self):
         """Start the main loop of the game."""
@@ -184,7 +184,7 @@ class LerkaInvasion:
 
         # Get rid of bullets that have disappeared.
         for bullet in self.bullets.copy():
-            if bullet.rect.left >= self.settings.screen_width:
+            if bullet.rect.left >= self.screen_width:
                 self.bullets.remove(bullet)
 
         self._check_bullet_lerka_collisions()
@@ -232,7 +232,7 @@ class LerkaInvasion:
         self.rockets_b.update()
 
         for rocket_b in self.rockets_b.copy():
-            if rocket_b.rect.top >= self.settings.screen_height:
+            if rocket_b.rect.top >= self.screen_height:
                 self.rockets_b.remove(rocket_b)
 
         self._check_rocket_b_lerka_collisions()
@@ -281,7 +281,7 @@ class LerkaInvasion:
             self._create_fleet()
             # Ruch na początku rundy (w zależności od tego, gdzie zakończył
             # się w poprzedniej rundzie lub zawsze w dół):
-            self.settings.fleet_direction = 1
+            self.settings.fleet_direction *= -1
             self.settings.increase_speed()
 
             self.stats.level += 1
@@ -289,18 +289,18 @@ class LerkaInvasion:
 
     def _create_fleet(self):
         """Create a full fleet of Lerkas."""
-        # Create an Lerka and find the number of Lerkas in a row.
+        # Create a Lerka and find the number of Lerkas in a row.
         # Spacing between each Lerka is equal to one Lerka width.
         lerka = Lerka(self)
         lerka_height, lerka_width = lerka.rect.size
-        available_space_y = self.settings.screen_height - 2 * lerka_height
+        available_space_y = self.screen_height - 2 * lerka_height
         number_lerkas_y = available_space_y // (2 * lerka_height)
         if number_lerkas_y >= 5:
             number_lerkas_y = 5
 
         # Determine the numer of rows of Lerkas that fit on the screen.
         ship_width = self.ship.rect.width
-        available_space_x = (self.settings.screen_width -
+        available_space_x = (self.screen_width -
                              (5 * lerka_width) - ship_width)
         number_rows = available_space_x // (2 * lerka_width)
 
@@ -309,14 +309,14 @@ class LerkaInvasion:
                 self._create_lerka(lerka_number, row_number)
 
     def _create_lerka(self, lerka_number, row_number):
-        """Create an Lerka and place it in the row."""
+        """Create a Lerka and place it in the row."""
         lerka = Lerka(self)
         lerka_height, lerka_width = lerka.rect.size
         # lerka.y = (lerka_height + 2 * lerka_height * lerka_number)
         # lerka.y = (2 * lerka_height * lerka_number + random_number)
         lerka.y = lerka_height + 2 * lerka_height * lerka_number
         lerka.rect.y = lerka.y
-        lerka.x = ((self.settings.screen_width + 5 * lerka.rect.width)
+        lerka.x = ((self.screen_width + 5 * lerka.rect.width)
                    - 2 * lerka.rect.width * row_number)
         lerka.rect.x = lerka.x
         self.lerkas.add(lerka)

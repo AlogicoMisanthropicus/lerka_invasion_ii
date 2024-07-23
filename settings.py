@@ -7,6 +7,7 @@ class Settings:
 
         self.ship_limit = 2
 
+        self.lerka_points = 0
         self.bullet_width = 18
         self.bullet_height = 5
         self.bullet_color = (60, 60, 60)

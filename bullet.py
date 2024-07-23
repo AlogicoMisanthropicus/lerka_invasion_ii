@@ -8,7 +8,7 @@ class Bullet(Sprite):
     przez statek.
     """
 
-    def __init__(self, li_game):
+    def __init__(self, li_game) -> None:
         """Utworzenie obiektu pocisku w aktualnym położeniu."""
         super().__init__()
         self.screen = li_game.screen
